@@ -1,0 +1,25 @@
+diff --git a/tier0/memstd.cpp b/tier0/memstd.cpp
+index 76d1fc8..dc2d461 100644
+--- a/tier0/memstd.cpp
++++ b/tier0/memstd.cpp
+@@ -1585,13 +1585,19 @@ void *CStdMemAlloc::Expand_NoLongerSupported( void *pMem, size_t nSize, const ch
+ 	return NULL;
+ }
+ 
+-#if defined (LINUX)
++#if defined (LINUX) && !defined(SUNOS)
+ #include <malloc.h>
+ #elif defined (OSX)
+ #define malloc_usable_size( ptr ) malloc_size( ptr )
+ extern "C" {
+ 	extern size_t malloc_size( const void *ptr );
+ }
++#elif defined(SUNOS)
++#if defined(USE_MIMALLOC)
++extern "C" size_t malloc_usable_size( void *ptr );
++#else
++static inline size_t malloc_usable_size( void *ptr ) { (void)ptr; return 0; }
++#endif
+ #endif
+ 
+ //-----------------------------------------------------------------------------

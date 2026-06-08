@@ -1,0 +1,15 @@
+diff --git a/togles/linuxwin/glmgrbasics.cpp b/togles/linuxwin/glmgrbasics.cpp
+index fb408dd..64174f8 100644
+--- a/togles/linuxwin/glmgrbasics.cpp
++++ b/togles/linuxwin/glmgrbasics.cpp
+@@ -2628,9 +2628,7 @@ bool	GLMDetectOGLP( void )
+ #include <sys/types.h>  
+ #ifndef _WIN32
+ 	#include <unistd.h>  
+-#ifdef LINUX
+-#include <linux/sysctl.h>
+-#else
++#ifdef OSX
+ #include <sys/sysctl.h>
+ #endif
+ #endif

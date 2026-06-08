@@ -1,0 +1,56 @@
+diff --git a/tier0/cpu_posix.cpp b/tier0/cpu_posix.cpp
+index a86f40a..b4dbcf4 100644
+--- a/tier0/cpu_posix.cpp
++++ b/tier0/cpu_posix.cpp
+@@ -7,9 +7,9 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <sys/types.h>
+-#ifdef LINUX
++#if defined(LINUX) && !defined(SUNOS)
+ #include <linux/sysctl.h>
+-#else
++#elif !defined(SUNOS)
+ #include <sys/sysctl.h>
+ # ifdef __APPLE__
+ #  define CPUFREQ_SYSCTL "hw.cpufrequency_max"
+@@ -104,6 +104,7 @@ uint64 CalculateCPUFreq()
+ #if defined(__APPLE__) || defined(PLATFORM_BSD)
+ 	return GetCPUFreqFromPROC();
+ #else
++#if !defined(SUNOS)
+ 	// Try to open cpuinfo_max_freq. If the kernel was built with cpu scaling support disabled, this will fail.
+ 	FILE *fp = fopen( "/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq", "r" );
+ 	if ( fp )
+@@ -123,6 +124,7 @@ uint64 CalculateCPUFreq()
+ 			return retVal * 1000;
+ 		}
+ 	}
++#endif // !SUNOS
+ 
+ #if !defined(__arm__) && !defined(__aarch64__)
+ 	// fallback mechanism to calculate when failed
+@@ -161,7 +163,11 @@ uint64 CalculateCPUFreq()
+ 
+ 	if ( count == max_iterations )
+ 	{
++#if defined(SUNOS)
++		return (uint64)3000000000;
++#else
+ 		return GetCPUFreqFromPROC(); // fall back to /proc
++#endif
+ 	}
+ 
+ 	// Set the period to the average period measured.
+@@ -171,7 +177,11 @@ uint64 CalculateCPUFreq()
+ 	// slowly or unevenly. 
+ 	if (period < 10000000)
+ 	{
++#if defined(SUNOS)
++		return (uint64)3000000000;
++#else
+ 		return GetCPUFreqFromPROC(); // fall back to /proc
++#endif
+ 	}
+ 
+ 	return period;
