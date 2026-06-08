@@ -974,7 +974,7 @@ void CStdioFile::FS_fclose()
 		AUTO_LOCK( m_MutexLockedFD );
 
 		struct _stat buf;
-#ifdef ANDROID
+#if defined(ANDROID) || defined(SUNOS)
 		int fd = fileno( m_pFile ); // need to test this
 #else
 		int fd = fileno_unlocked( m_pFile );

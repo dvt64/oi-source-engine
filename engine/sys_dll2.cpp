@@ -386,7 +386,7 @@ public:
 		_se_translator_function curfilter = _set_se_translator( &FailSafe );
 #elif defined( POSIX )
 		// Only need to worry about this function crashing when we're dealing with a real crash.
-		sig_t curfilter = bRealCrash ? signal( SIGSEGV, posix_signal_handler ) : 0;
+void (*curfilter)(int) = bRealCrash ? signal( SIGSEGV, posix_signal_handler ) : SIG_DFL;
 #endif
 
 		DO_TRY

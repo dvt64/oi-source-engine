@@ -677,6 +677,13 @@ void Sys_InitMemory( void )
 	{
 		memsize = ONE_HUNDRED_TWENTY_EIGHT_MB;
 	}
+#elif defined(SUNOS)
+	{
+		const long pages = sysconf(_SC_PHYS_PAGES);
+		const long page_size = sysconf(_SC_PAGESIZE);
+		if (pages > 0 && page_size > 0)
+			memsize = (uint64_t)pages * (uint64_t)page_size;
+	}
 #elif defined(LINUX)
 	const int fd = open("/proc/meminfo", O_RDONLY);
 	if (fd < 0)

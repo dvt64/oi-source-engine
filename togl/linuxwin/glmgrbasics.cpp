@@ -2627,10 +2627,8 @@ bool	GLMDetectOGLP( void )
 #endif
 #include <sys/types.h>  
 #ifndef _WIN32
-	#include <unistd.h>  
-#ifdef LINUX
-#include <linux/sysctl.h>
-#else
+	#include <unistd.h>
+#ifdef OSX
 #include <sys/sysctl.h>
 #endif
 #endif

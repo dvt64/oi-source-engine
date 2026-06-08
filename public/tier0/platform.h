@@ -76,6 +76,9 @@
 #include <unistd.h>
 #include <signal.h>
 #include <time.h>
+# if defined(SUNOS) || defined(__sun)
+#  include <sys/filio.h>
+# endif
 #endif
 
 #ifdef OSX
@@ -565,7 +568,9 @@ typedef void * HINSTANCE;
 //-----------------------------------------------------------------------------
 #if defined( GNUC )
 	#define stackalloc( _size )		alloca( ALIGN_VALUE( _size, 16 ) )
-#if defined(_LINUX) || defined(PLATFORM_BSD)
+#if defined(SUNOS) || defined(__sun)
+	#define mallocsize( _p )	( 0 )
+#elif defined(_LINUX) || defined(PLATFORM_BSD)
 	#define mallocsize( _p )	( malloc_usable_size( _p ) )
 #elif defined(OSX)
 	#define mallocsize( _p )	( malloc_size( _p ) )

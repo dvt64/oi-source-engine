@@ -11,6 +11,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#ifndef SUNOS
+
 #ifdef GNUC
 #define __cdecl 
 #endif
@@ -23,5 +25,7 @@ int __cdecl rand()
 {
 	return RandomInt( 0, VALVE_RAND_MAX );
 }
+
+#endif // SUNOS
 
 #endif // !_STATIC_LINKED || _SHARED_LIB

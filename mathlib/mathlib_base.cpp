@@ -50,10 +50,10 @@ const int nanmask = 255<<23;
 //-----------------------------------------------------------------------------
 // Standard C implementations of optimized routines:
 //-----------------------------------------------------------------------------
-float _sqrtf(float _X)
+float _sqrtf(float x)
 {
 	Assert( s_bMathlibInitialized );
-	return sqrtf(_X); 
+	return sqrtf(x); 
 }
 
 float _rsqrtf(float x)

@@ -121,6 +121,10 @@ float GetCPUUsage()
 
 #ifdef POSIX
 #include <stdlib.h>
+#if defined(SUNOS)
+#include <sys/time.h>
+#include <sys/loadavg.h>
+#endif
 
 float GetCPUUsage() 
 {

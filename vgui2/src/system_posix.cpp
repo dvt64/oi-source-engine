@@ -31,9 +31,11 @@
 #if defined(OSX) || defined(PLATFORM_BSD)
 #include <sys/param.h>
 #include <sys/mount.h>
-#elif defined(LINUX)
+#elif defined(LINUX) && !defined(SUNOS)
 #define _LARGEFILE64_SOURCE
 #include <sys/vfs.h>
+#elif defined(SUNOS)
+#include <sys/statvfs.h>
 #endif
 #ifdef OSX
 #include <Carbon/Carbon.h>
@@ -588,17 +590,26 @@ int CSystem::GetAvailableDrives(char *buf, int bufLen)
 //-----------------------------------------------------------------------------
 double CSystem::GetFreeDiskSpace(const char *path)
 {
-#if __DARWIN_ONLY_64_BIT_INO_T || PLATFORM_BSD
+#if defined(SUNOS)
+	struct statvfs buf;
+	int ret = statvfs( path, &buf );
+	if ( ret < 0 )
+		return 0.0;
+	return (double)( buf.f_frsize * buf.f_bfree );
+#elif __DARWIN_ONLY_64_BIT_INO_T || PLATFORM_BSD
     // MoeMod: newer macOS only support 64bit, so no statfs64 is provided
     struct statfs buf;
     int ret = statfs( path, &buf );
-#else
-	struct statfs64 buf;
-	int ret = statfs64( path, &buf );
-#endif
 	if ( ret < 0 )
 		return 0.0;
 	return (double) ( buf.f_bsize * buf.f_bfree );
+#else
+	struct statfs64 buf;
+	int ret = statfs64( path, &buf );
+	if ( ret < 0 )
+		return 0.0;
+	return (double) ( buf.f_bsize * buf.f_bfree );
+#endif
 }
 
 //-----------------------------------------------------------------------------

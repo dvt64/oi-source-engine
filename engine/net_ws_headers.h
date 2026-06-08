@@ -54,6 +54,9 @@ typedef int socklen_t;
 #include <netdb.h>
 #include <sys/param.h>
 #include <sys/ioctl.h>
+#if defined(SUNOS) || defined(__sun)
+#include <sys/filio.h>
+#endif
 #include <sys/uio.h>
 #include <errno.h>
 #include <string.h>
