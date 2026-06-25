@@ -1,0 +1,27 @@
+diff --git a/engine/solaris_preinclude.h b/engine/solaris_preinclude.h
+new file mode 100644
+index 0000000..fc8b96f
+--- /dev/null
++++ b/engine/solaris_preinclude.h
+@@ -0,0 +1,7 @@
++// Force-included on Solaris builds (-include). Claim sys/model.h early with
++// model_t renamed so Source Engine can use struct model_t later.
++#if defined(SUNOS) || defined(_SUNOS) || defined(__sun)
++#define model_t solaris_kernel_model_t
++#include <sys/model.h>
++#undef model_t
++#endif
+diff --git a/wscript b/wscript
+index a6c57d6..c6c730f 100644
+--- a/wscript
++++ b/wscript
+@@ -558,6 +558,9 @@ def configure(conf):
+ 			linkflags += ['-L/usr/lib', '-Wl,-R/usr/lib', '-lmimalloc', '-lpthread']
+ 			conf.msg('mimalloc', 'enabled (linked into all targets)')
+ 
++		preinclude = os.path.abspath("engine/solaris_preinclude.h")
++		cflags += ["-include", preinclude]
++
+ 	if conf.env.DEST_OS != 'win32':
+ 		cflags += flags
+ 		linkflags += flags

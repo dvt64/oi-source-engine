@@ -344,6 +344,15 @@ def options(opt):
 	opt.load('reconfigure')
 
 def check_deps(conf):
+	if conf.env.DEST_OS == 'sunos':
+		sunos_pkg = '/usr/lib/64/pkgconfig'
+		prev = os.environ.get('PKG_CONFIG_PATH', '')
+		if prev:
+			if sunos_pkg not in prev.split(':'):
+				os.environ['PKG_CONFIG_PATH'] = sunos_pkg + ':' + prev
+		else:
+			os.environ['PKG_CONFIG_PATH'] = sunos_pkg
+
 	if conf.env.DEST_OS != 'win32':
 		conf.check_cc(lib='dl', mandatory=False)
 		conf.check_cc(lib='bz2', mandatory=True)
@@ -557,6 +566,9 @@ def configure(conf):
 			conf.env.USE_MIMALLOC = True
 			linkflags += ['-L/usr/lib', '-Wl,-R/usr/lib', '-lmimalloc', '-lpthread']
 			conf.msg('mimalloc', 'enabled (linked into all targets)')
+
+		preinclude = os.path.abspath("engine/solaris_preinclude.h")
+		cflags += ["-include", preinclude]
 
 	if conf.env.DEST_OS != 'win32':
 		cflags += flags

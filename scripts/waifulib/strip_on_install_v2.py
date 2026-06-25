@@ -29,16 +29,24 @@ def configure(conf):
 		
 		# a1ba: I am lazy to add `export OBJCOPY=` everywhere in my scripts
 		# so just try to deduce which objcopy we have
+		objcopy_paths = ['/usr/gnu/bin', '/usr/bin', '/bin'] if conf.env.DEST_OS == 'sunos' else None
+
+		def find_objcopy(prog):
+			if objcopy_paths:
+				conf.find_program(prog, var='OBJCOPY', path_list=objcopy_paths)
+			else:
+				conf.find_program(prog, var='OBJCOPY')
+
 		try:
 			k = conf.env.STRIP[0].rfind('-')
 			if k >= 0:
 				objcopy_name = conf.env.STRIP[0][:k] + '-objcopy'
-				try: conf.find_program(objcopy_name, var='OBJCOPY')
-				except: conf.find_program('objcopy', var='OBJCOPY')
+				try: find_objcopy(objcopy_name)
+				except: find_objcopy('objcopy')
 			else:
-				conf.find_program('objcopy', var='OBJCOPY')
+				find_objcopy('objcopy')
 		except:
-			conf.find_program('objcopy', var='OBJCOPY')
+			find_objcopy('objcopy')
 
 def copy_fun(self, src, tgt):
 	inst_copy_fun(self, src, tgt)

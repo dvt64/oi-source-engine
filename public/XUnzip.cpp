@@ -4256,7 +4256,11 @@ ZRESULT TUnzip::Unzip(int index,void *dst,unsigned int len,DWORD flags)
 		tv[0].tv_usec = 0;
 		tv[1].tv_sec = ze.mtime;
 		tv[1].tv_usec = 0;
+#if defined(SUNOS) || defined(_SUNOS) || defined(__sun)
+		futimesat( (intptr_t)h, NULL, tv );
+#else
 		futimes( (intptr_t)h, tv );
+#endif
 #endif
 	}
 	if (flags!=ZIP_HANDLE) 
